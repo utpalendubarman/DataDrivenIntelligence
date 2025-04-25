@@ -1,13 +1,49 @@
 /* Custom Styles for AI-Driven DataTable Application */
 
+/* Project page layout */
+.project-layout {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 76px); /* Adjust for navbar height */
+}
+
+.project-header {
+    flex: 0 0 auto;
+    padding-bottom: 1rem;
+}
+
+.project-content {
+    flex: 1 1 auto;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.data-table-container {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
 /* Sticky AI interaction section */
 .ai-interaction {
-    position: sticky;
-    bottom: 0;
+    flex: 0 0 auto;
     background-color: var(--bs-dark);
     border-top: 1px solid var(--bs-secondary);
     padding: 1rem;
     z-index: 1000;
+    margin-top: auto;
+}
+
+/* Reduced height for AI interaction section */
+.ai-interaction-compact .ai-interaction-body .row {
+    max-height: 120px;
+}
+
+.ai-interaction-compact .card {
+    max-height: 120px;
 }
 
 /* Custom styling for the AI output section */
@@ -32,11 +68,6 @@
     cursor: pointer;
 }
 
-/* Main content padding adjustment */
-.main-content {
-    padding-bottom: 200px; /* Give space for the sticky AI section */
-}
-
 /* Loading spinner */
 .loading-spinner {
     display: none;
@@ -47,7 +78,6 @@
 /* DataTable customizations */
 .dataTables_wrapper {
     width: 100%;
-    margin-bottom: 2rem;
 }
 
 /* Navbar brand spacing */
@@ -58,7 +88,7 @@
 
 /* Custom scrollbar for the AI response area */
 .ai-response {
-    max-height: 150px;
+    max-height: 80px;
     overflow-y: auto;
 }
 
@@ -73,7 +103,7 @@
         padding: 0.5rem;
     }
     
-    .main-content {
-        padding-bottom: 250px;
+    .project-layout {
+        height: calc(100vh - 60px);
     }
 }

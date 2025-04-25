@@ -87,14 +87,18 @@ $(document).ready(function() {
     // Toggle the AI interaction panel
     $('#toggleAI').click(function() {
         $('.ai-interaction-body').toggleClass('d-none');
-        const icon = $(this).find('i');
+        const icon = $(this).find('i:last-child');
         
         if (icon.hasClass('fa-chevron-up')) {
             icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
             $(this).attr('title', 'Expand AI Assistant').tooltip('dispose').tooltip();
+            // Adjust space for data table
+            $('.data-table-container').css('padding-bottom', '60px');
         } else {
             icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
             $(this).attr('title', 'Collapse AI Assistant').tooltip('dispose').tooltip();
+            // Reset space for data table
+            $('.data-table-container').css('padding-bottom', '10px');
         }
     });
     
