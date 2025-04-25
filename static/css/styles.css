@@ -8,13 +8,6 @@
     border-top: 1px solid var(--bs-secondary);
     padding: 1rem;
     z-index: 1000;
-    max-height: 80px;
-    overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
-}
-
-.ai-interaction.expanded {
-    max-height: 600px;
 }
 
 /* Custom styling for the AI output section */
