@@ -4,8 +4,12 @@
 .ai-interaction {
     position: sticky;
     bottom: 0;
-    background-color: var(--bs-dark);
-    border-top: 1px solid var(--bs-secondary);
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.2);
+    border-radius: 10px 10px 0 0;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.1);
     padding: 1rem;
     z-index: 1000;
     max-height: 80px;
@@ -29,9 +33,21 @@
     transition: transform 0.2s ease-in-out;
 }
 
+.project-card .card {
+    background-color: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
 .project-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.project-card:hover .card {
+    box-shadow: 0 8px 16px rgba(var(--bs-primary-rgb), 0.15);
+    border: 1px solid rgba(var(--bs-primary-rgb), 0.3);
 }
 
 /* Custom styling for file upload input */
