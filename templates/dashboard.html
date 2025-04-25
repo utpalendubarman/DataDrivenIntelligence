@@ -113,4 +113,20 @@
         </div>
     </div>
 </div>
+
+<!-- Error handling for modal -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add safety mechanism for modal
+    const modal = document.getElementById('createProjectModal');
+    if (modal) {
+        modal.addEventListener('hidden.bs.modal', function () {
+            console.log('Modal was hidden');
+            document.getElementById('projectName').value = '';
+            document.getElementById('csvFile').value = '';
+            document.getElementById('submitProject').disabled = true;
+        });
+    }
+});
+</script>
 {% endblock %}
