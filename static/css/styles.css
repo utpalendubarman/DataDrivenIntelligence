@@ -1,0 +1,79 @@
+/* Custom Styles for AI-Driven DataTable Application */
+
+/* Sticky AI interaction section */
+.ai-interaction {
+    position: sticky;
+    bottom: 0;
+    background-color: var(--bs-dark);
+    border-top: 1px solid var(--bs-secondary);
+    padding: 1rem;
+    z-index: 1000;
+}
+
+/* Custom styling for the AI output section */
+.ai-output {
+    border-radius: 0.375rem;
+    background-color: rgba(var(--bs-dark-rgb), 0.8);
+    border: 1px solid var(--bs-border-color);
+}
+
+/* Style for project cards */
+.project-card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Custom styling for file upload input */
+.custom-file-upload {
+    cursor: pointer;
+}
+
+/* Main content padding adjustment */
+.main-content {
+    padding-bottom: 200px; /* Give space for the sticky AI section */
+}
+
+/* Loading spinner */
+.loading-spinner {
+    display: none;
+    width: 2rem;
+    height: 2rem;
+}
+
+/* DataTable customizations */
+.dataTables_wrapper {
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+/* Navbar brand spacing */
+.navbar-brand {
+    font-weight: bold;
+    margin-right: 2rem;
+}
+
+/* Custom scrollbar for the AI response area */
+.ai-response {
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+/* Make sure modal appears on top of the sticky AI section */
+.modal {
+    z-index: 1050;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .ai-interaction {
+        padding: 0.5rem;
+    }
+    
+    .main-content {
+        padding-bottom: 250px;
+    }
+}
