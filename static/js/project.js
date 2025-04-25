@@ -1,4 +1,6 @@
 $(document).ready(function() {
+    // Initialize modals
+    var infoModal = new bootstrap.Modal(document.getElementById('infoModal'));
     // Get project ID from the page
     const projectId = $('#projectData').data('project-id');
     
@@ -86,8 +88,8 @@ $(document).ready(function() {
     
     // Toggle the AI interaction panel
     $('#toggleAI').click(function() {
-        $('.ai-interaction-body').toggleClass('d-none');
-        const icon = $(this).find('i');
+        $('.ai-interaction').toggleClass('expanded');
+        const icon = $(this).find('i.fa-chevron-up, i.fa-chevron-down');
         
         if (icon.hasClass('fa-chevron-up')) {
             icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
@@ -119,11 +121,16 @@ $(document).ready(function() {
     $(window).resize(function() {
         if ($(window).width() < 768) {
             // On small screens, collapse the AI panel by default
-            if (!$('.ai-interaction-body').hasClass('d-none')) {
+            if ($('.ai-interaction').hasClass('expanded')) {
                 $('#toggleAI').click();
             }
         }
     });
+    
+    // Initialize the AI panel as collapsed by default
+    if ($('.ai-interaction').hasClass('expanded')) {
+        $('#toggleAI').click();
+    }
     
     // Back to dashboard button
     $('#backToDashboard').click(function() {
