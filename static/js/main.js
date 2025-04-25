@@ -1,12 +1,42 @@
 $(document).ready(function() {
-    // Initialize tooltips
+    // Initialize tooltips and popovers
     try {
+        // Initialize tooltips
         const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
         tooltipTriggerList.forEach(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
+            return new bootstrap.Tooltip(tooltipTriggerEl, {
+                animation: true
+            });
         });
+        
+        // Initialize popovers
+        const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+        popoverTriggerList.forEach(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl, {
+                animation: true
+            });
+        });
+        
+        // Enable all modals
+        const modals = document.querySelectorAll('.modal');
+        modals.forEach(function(modalEl) {
+            const modal = new bootstrap.Modal(modalEl, {
+                backdrop: 'static',
+                keyboard: true,
+                focus: true
+            });
+            
+            // Focus on first input when modal opens
+            modalEl.addEventListener('shown.bs.modal', function () {
+                const firstInput = modalEl.querySelector('input');
+                if (firstInput) {
+                    firstInput.focus();
+                }
+            });
+        });
+        
     } catch (e) {
-        console.error("Error initializing tooltips:", e);
+        console.error("Error initializing Bootstrap components:", e);
     }
 
     // Fix for modal freeze issue
