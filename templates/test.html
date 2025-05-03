@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <title>SocketIO Test</title>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  </head>
+  <body>
+    <h1>Socket.IO Chat</h1>
+    <input id="myMessage" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+    
+    <ul id="messages"></ul>
+
+    <script type="text/javascript">
+      var socket = io();
+
+      socket.on('connect', function() {
+        console.log('Connected to server!');
+      });
+
+      socket.on('message', function(msg) {
+        var item = document.createElement('li');
+        item.textContent = msg;
+        document.getElementById('messages').appendChild(item);
+      });
+
+      function sendMessage() {
+        var input = document.getElementById('myMessage');
+        socket.send(input.value);
+        input.value = '';
+      }
+    </script>
+  </body>
+</html>

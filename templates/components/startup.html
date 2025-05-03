@@ -1,0 +1,311 @@
+<style>
+    :root {
+        --primary-color: #3498db;
+        --secondary-color: #2c3e50;
+        --accent-color: #e74c3c;
+        --light-color: #ecf0f1;
+        --dark-color: #34495e;
+        --success-color: #2ecc71;
+        --warning-color: #f39c12;
+        --danger-color: #e74c3c;
+        --border-radius: 4px;
+        --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    }
+
+
+    .card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: var(--shadow);
+        width: 100%;
+        max-width: 900px;
+        display: flex;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-left {
+        flex: 1;
+        padding: 2rem;
+        border-right: 1px solid var(--light-color);
+    }
+
+    .card-right {
+        flex: 1;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .icon-circle {
+        background-color: var(--primary-color);
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        flex-shrink: 0;
+    }
+
+    .icon-circle svg {
+        fill: white;
+        width: 24px;
+        height: 24px;
+    }
+
+    .card-title {
+        color: var(--secondary-color);
+        font-size: 1.5rem;
+        font-weight: 600;
+    }
+
+    .card-body {
+        color: #666;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+
+    .data-source-icons {
+        display: flex;
+        margin-bottom: 1.5rem;
+    }
+
+    .data-source-icon {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-right: 1.5rem;
+    }
+
+    .icon-box {
+        background-color: var(--light-color);
+        border-radius: var(--border-radius);
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .icon-box svg {
+        fill: var(--primary-color);
+        width: 32px;
+        height: 32px;
+    }
+
+    .icon-label {
+        font-size: 0.75rem;
+        color: var(--dark-color);
+    }
+
+    .stats {
+        display: flex;
+        margin-bottom: 1.5rem;
+    }
+
+    .stat {
+        flex: 1;
+        text-align: center;
+        padding: 1rem;
+        background-color: var(--light-color);
+        border-radius: var(--border-radius);
+        margin-right: 0.5rem;
+    }
+
+    .stat:last-child {
+        margin-right: 0;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--dark-color);
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+        font-size: 0.75rem;
+        color: #777;
+        text-transform: uppercase;
+    }
+
+    .steps {
+        margin-bottom: auto;
+    }
+
+    .step {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.75rem;
+    }
+
+    .step-number {
+        background-color: var(--primary-color);
+        color: white;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        margin-right: 0.75rem;
+        flex-shrink: 0;
+    }
+
+    .step-text {
+        color: var(--dark-color);
+    }
+
+    .create-btn {
+        display: block;
+        width: 100%;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: var(--border-radius);
+        padding: 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 1.5rem;
+    }
+
+    .create-btn:hover {
+        background-color: #2980b9;
+    }
+
+    .card-footer {
+        margin-top: 1rem;
+        text-align: center;
+        font-size: 0.875rem;
+        color: #999;
+    }
+
+    .accent {
+        color: var(--accent-color);
+    }
+
+    @media (max-width: 768px) {
+        .card {
+            flex-direction: column;
+            max-width: 500px;
+        }
+
+        .card-left {
+            border-right: none;
+            border-bottom: 1px solid var(--light-color);
+        }
+    }
+</style>
+
+
+<div class="card" style="background-color: white;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 900px;
+    margin: 60px 100px 60px 100px;
+    height: 100vh;
+    display: flex
+    ;
+    transition: transform 0.3s, box-shadow 0.3s;">
+    <div class="card-left">
+        <div class="card-header">
+            <div class="icon-circle">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M19 3H5C3.9 3 3 3.9 3 5v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H6v-2h6v2zm4-4H6v-2h10v2zm0-4H6V7h10v2z" />
+                </svg>
+            </div>
+            <h2 class="card-title">Create Data Q&A Project</h2>
+        </div>
+
+        <div class="card-body">
+            Turn your data into instant insights with natural language questions. Connect to databases or upload CSV
+            files to get immediate answers without writing complex queries.
+        </div>
+
+        <div class="data-source-icons">
+            <div class="data-source-icon">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm-2 16c-2.05 0-3.81-1.24-4.58-3h1.71c.63.9 1.68 1.5 2.87 1.5 1.93 0 3.5-1.57 3.5-3.5S13.93 9.5 12 9.5c-1.35 0-2.52.78-3.1 1.9l1.6 1.6h-4V9l1.3 1.3C8.69 8.92 10.23 8 12 8c2.76 0 5 2.24 5 5s-2.24 5-5 5z" />
+                    </svg>
+                </div>
+                <span class="icon-label">CSV Upload</span>
+            </div>
+            <div class="data-source-icon">
+                <div class="icon-box">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M12,3C7.58,3,4,4.79,4,7C4,9.21,7.58,11,12,11S20,9.21,20,7C20,4.79,16.42,3,12,3M4,9V12C4,14.21,7.58,16,12,16S20,14.21,20,12V9C20,11.21,16.42,13,12,13S4,11.21,4,9M4,14V17C4,19.21,7.58,21,12,21S20,19.21,20,17V14C20,16.21,16.42,18,12,18S4,16.21,4,14Z" />
+                    </svg>
+                </div>
+                <span class="icon-label">Database</span>
+            </div>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">90%</div>
+                <div class="stat-label">Query Accuracy</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">15+</div>
+                <div class="stat-label">DB Types</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">30s</div>
+                <div class="stat-label">Avg. Response</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-right">
+        <div class="steps">
+            <h3 style="margin-bottom: 1rem; color: var(--secondary-color);">How It Works</h3>
+            <div class="step">
+                <div class="step-number">1</div>
+                <div class="step-text">Connect your data source (CSV or database)</div>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <div class="step-text">System automatically analyzes schema structure</div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-text">Ask questions in plain English and get instant reports</div>
+            </div>
+        </div>
+
+        <button class="create-btn" id="newProjectBtn">Create Q&A Project</button>
+
+        <div class="card-footer">
+            Supports MySQL, PostgreSQL, SQL Server, Oracle, SQLite and CSV files. <span class="accent">View
+                compatibility details</span>
+        </div>
+    </div>
+</div>

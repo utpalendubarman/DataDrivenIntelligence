@@ -1,200 +1,460 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block title %}Dashboard - AI Data Explorer{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Data Interaction Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
 
-{% block content %}
-<div class="row mb-4 align-items-center">
-    <div class="col-md-6">
-        <h1 class="display-5 mb-0">
-            <i class="fas fa-th-large me-2"></i>Projects Dashboard
-        </h1>
-        <p class="text-muted mt-2">Manage and explore your data projects</p>
-    </div>
-    <div class="col-md-6 text-md-end">
-        <button type="button" class="btn btn-primary" id="createProjectButton">
-            <i class="fas fa-plus me-1"></i> Create New Project
-        </button>
-    </div>
-</div>
-
-<!-- Search and Sort Section -->
-<div class="row mb-4">
-    <div class="col-md-8">
-        <div class="input-group">
-            <span class="input-group-text"><i class="fas fa-search"></i></span>
-            <input type="text" class="form-control" id="projectSearch" placeholder="Search projects...">
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-brain"></i>
+            <span>AI Data Interaction</span>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="input-group">
-            <label class="input-group-text" for="sortProjects"><i class="fas fa-sort"></i></label>
-            <select class="form-select" id="sortProjects">
-                <option value="dateDesc" selected>Newest First</option>
-                <option value="dateAsc">Oldest First</option>
-                <option value="nameAsc">Name (A-Z)</option>
-                <option value="nameDesc">Name (Z-A)</option>
-            </select>
-        </div>
-    </div>
-</div>
-
-<!-- Projects Display -->
-<div class="row" id="projectsContainer">
-    {% if projects %}
-        {% for project in projects %}
-        <div class="col-md-4 mb-4 project-card" data-created-at="{{ project.created_at }}">
-            <div class="card h-100 border-0 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">
-                        <i class="fas fa-database me-2 text-primary"></i>{{ project.name }}
-                    </h5>
-                    <p class="card-text text-muted mb-0">
-                        <small>
-                            <i class="fas fa-file me-1"></i> {{ project.file_name }}<br>
-                            <i class="fas fa-table me-1"></i> {{ project.row_count }} rows, {{ project.column_count }} columns<br>
-                            <i class="fas fa-calendar me-1"></i> Created: {{ project.created_at }}
-                        </small>
-                    </p>
-                </div>
-                <div class="card-footer bg-transparent border-0">
-                    <a href="{{ url_for('project_view', project_id=project.id) }}" class="btn btn-outline-primary btn-sm w-100">
-                        <i class="fas fa-external-link-alt me-1"></i> Open Project
-                    </a>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    {% else %}
-        <div class="col-12 text-center py-5">
-            <div class="display-1 text-muted mb-4">
-                <i class="fas fa-database"></i>
-            </div>
-            <h3 class="text-muted">No Projects Yet</h3>
-            <p class="mb-4">Create your first project by uploading a CSV file.</p>
-            <button type="button" class="btn btn-outline-primary" id="createProjectButtonAlt">
-                <i class="fas fa-plus me-1"></i> Create New Project
+        <div class="toolbar">
+            <button class="toggle-panel" id="togglePanel">
+                <i class="fas fa-bars"></i>
             </button>
-            <div class="mt-4">
-                <a href="{{ url_for('static', filename='sample/sample_data.csv') }}" download class="btn btn-sm btn-outline-secondary">
-                    <i class="fas fa-download me-1"></i> Download Sample CSV
-                </a>
-            </div>
+            <button class="btn btn-primary">
+                <i class="fas fa-plus"></i>
+                <span>New Project</span>
+            </button>
         </div>
-    {% endif %}
-</div>
+    </header>
 
-<!-- Replaced modal with inline form for more reliability -->
-<div class="card mb-4 d-none" id="createProjectCard">
-    <div class="card-header bg-primary text-white">
-        <div class="d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="fas fa-plus-circle me-2"></i>Create New Project</h5>
-            <button type="button" class="btn-close btn-close-white" id="closeProjectForm" aria-label="Close"></button>
-        </div>
-    </div>
-    <div class="card-body">
-        <form id="createProjectForm" action="{{ url_for('create_project') }}" method="post" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label for="projectName" class="form-label">Project Name</label>
-                <input type="text" class="form-control" id="projectName" name="project_name" placeholder="My Data Project" required>
-                <div class="form-text">Choose a descriptive name for your project</div>
-            </div>
-            
-            <div class="mb-3">
-                <label for="csvFile" class="form-label">Upload CSV File</label>
-                <input type="file" class="form-control" id="csvFile" name="csv_file" accept=".csv" required>
-                <div class="form-text">Select a CSV file to upload (max 10MB)</div>
-            </div>
-            
-            <div class="d-flex justify-content-end">
-                <button type="button" class="btn btn-secondary me-2" id="cancelProjectForm">Cancel</button>
-                <button type="submit" class="btn btn-primary" id="submitProject" disabled>
-                    <span id="loadingSpinner" class="spinner-border spinner-border-sm loading-spinner" role="status" aria-hidden="true"></span>
-                    Create Project
+    <div class="main-container">
+        <div class="ai-panel">
+            <div class="ai-panel-header">
+                <span>AI Assistant</span>
+                <button class="btn-secondary" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" id="clearAiBtn">
+                    <i class="fas fa-trash"></i>
                 </button>
             </div>
-        </form>
-    </div>
-</div>
+            <div class="ai-panel-body">
+                <div class="section-label">Your prompt</div>
+                <textarea class="ai-prompt-input" placeholder="Ask something about your data..."></textarea>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Replace modal with inline form
-    const createBtn = document.getElementById('createProjectButton');
-    const createBtnAlt = document.getElementById('createProjectButtonAlt');
-    const projectCard = document.getElementById('createProjectCard');
-    const closeBtn = document.getElementById('closeProjectForm');
-    const cancelBtn = document.getElementById('cancelProjectForm');
-    
-    function showForm() {
-        projectCard.classList.remove('d-none');
-        document.getElementById('projectName').focus();
-        console.log('Form displayed');
-    }
-    
-    if (createBtn) {
-        createBtn.addEventListener('click', showForm);
-        console.log('Added event listener to main create button');
-    }
-    
-    if (createBtnAlt) {
-        createBtnAlt.addEventListener('click', showForm);
-        console.log('Added event listener to alternative create button');
-    }
-    
-    function hideForm() {
-        projectCard.classList.add('d-none');
-        document.getElementById('projectName').value = '';
-        document.getElementById('csvFile').value = '';
-        document.getElementById('submitProject').disabled = true;
-        console.log('Form hidden');
-    }
-    
-    if (closeBtn) {
-        closeBtn.addEventListener('click', hideForm);
-    }
-    
-    if (cancelBtn) {
-        cancelBtn.addEventListener('click', hideForm);
-    }
-    
-    // File and project name validation
-    const projectName = document.getElementById('projectName');
-    const csvFile = document.getElementById('csvFile');
-    const submitBtn = document.getElementById('submitProject');
-    
-    function validateForm() {
-        if (projectName.value.trim() && csvFile.files.length > 0) {
-            submitBtn.disabled = false;
-        } else {
-            submitBtn.disabled = true;
-        }
-    }
-    
-    if (projectName) {
-        projectName.addEventListener('input', validateForm);
-    }
-    
-    if (csvFile) {
-        csvFile.addEventListener('change', validateForm);
-    }
-    
-    // Form submission
-    const form = document.getElementById('createProjectForm');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            const nameValue = projectName.value.trim();
-            const fileValue = csvFile.files.length;
-            
-            if (!nameValue || !fileValue) {
+                <button class="btn btn-primary" style="margin-bottom: 1rem;" id="submitPromptBtn">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Submit</span>
+                </button>
+
+
+                <div class="section-label">Formatted prompt</div>
+                <textarea class="ai-formatted-prompt" id="ai-formatted-prompt" rows="4" placeholder="..."
+                    readonly></textarea>
+
+                <div class="section-label">Database Query</div>
+                <textarea class="ai-formatted-prompt" id="ai-query" rows="4" placeholder="..." readonly></textarea>
+
+                
+
+                <div class="section-label" id="report-label" style="display:none">Summary</div>
+                <div class="report">
+                    <b id="report_heading"></b>
+                    <p id="report_content"></p>
+                </div>
+
+            </div>
+        </div>
+        <div class="content-area" style="align-items: center;justify-content: center;display:none;" id="startup-screen">
+            {% include "components/startup.html" %}
+        </div>
+        <div class="content-area" style="align-items: center;justify-content: center;display:none;"
+            id="processing-screen">
+            {% include "components/processing-table.html" %}
+        </div>
+        <div class="content-area" id="tables-screen" style="display:none">
+
+            <div class="table-list">
+                <!--<div class="table-tab active" data-table="mainTable">Main Table</div>
+                <button class="add-table-btn" id="addTableBtn">
+                    <i class="fas fa-plus"></i>
+                    Add Table
+                </button>-->
+                <button class="btn btn-secondary" id="exportBtn">
+                    <i class="fas fa-download"></i>
+                    <span>Export</span>
+                </button>
+                <div class="table-actions">
+                    <button class="btn btn-secondary" id="columnsBtn">
+                        <i class="fas fa-columns"></i>
+                        <span>Columns</span>
+                    </button>
+                </div>
+            </div>
+
+
+            <!--<div class="data-visualization">
+                <div class="graph-container" id="lineChart">
+                    <canvas id="dataLineChart"></canvas>
+                </div>
+                <div class="graph-container" id="barChart">
+                    <canvas id="dataBarChart"></canvas>
+                </div>
+            </div>-->
+
+            <div class="data-toolbar">
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Search data...">
+                    <button class="btn btn-secondary" id="searchBtn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="table-actions">
+
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th data-sort="id">ID <i class="fas fa-sort sort-icon"></i></th>
+                            <th data-sort="name">Name <i class="fas fa-sort sort-icon"></i></th>
+                            <th data-sort="category">Category <i class="fas fa-sort sort-icon"></i></th>
+                            <th data-sort="date">Date <i class="fas fa-sort sort-icon"></i></th>
+                            <th data-sort="value">Value <i class="fas fa-sort sort-icon"></i></th>
+                            <th data-sort="status">Status <i class="fas fa-sort sort-icon"></i></th>
+                            <th data-sort="region">Region <i class="fas fa-sort sort-icon"></i></th>
+                            <th data-sort="rating">Rating <i class="fas fa-sort sort-icon"></i></th>
+                            <th data-sort="quantity">Quantity <i class="fas fa-sort sort-icon"></i></th>
+                            <th data-sort="code">Code <i class="fas fa-sort sort-icon"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Table data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination" id="pagination">
+                <!-- Pagination will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    {% include "components/project-modal.html" %}
+
+    <!-- Column Selection Modal -->
+    <div class="modal-overlay" id="columnModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Column Settings</div>
+                <button class="modal-close" id="closeColumnModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Select columns to display:</label>
+                    <div class="column-selector" id="columnSelector">
+                        <!-- Column checkboxes will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="resetColumns">Reset</button>
+                <button class="btn btn-primary" id="saveColumns">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Options Modal -->
+    <div class="modal-overlay" id="exportModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Export Data</div>
+                <button class="modal-close" id="closeExportModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Export Format</label>
+                    <select class="form-control" id="exportFormat">
+                        <option value="csv">CSV</option>
+                        <option value="xlsx">Excel (XLSX)</option>
+                        <option value="json">JSON</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Export Options</label>
+                    <div>
+                        <input type="checkbox" id="exportCurrentView" checked>
+                        <label for="exportCurrentView">Export current view (with filters applied)</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="exportSelectedColumns" checked>
+                        <label for="exportSelectedColumns">Export only visible columns</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelExport">Cancel</button>
+                <button class="btn btn-primary" id="confirmExport">Export</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='graph.js') }}"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='screens.js') }}"></script>
+    <script>
+        start_project();
+
+        $(document).ready(function () {
+
+            // New Project Modal
+            $('#newProjectBtn').click(function () {
+                $('#newProjectModal').addClass('active').fadeIn(200);
+            });
+
+            $('#closeNewProjectModal, #cancelNewProject').click(function () {
+                $('#newProjectModal').fadeOut(200);
+            });
+
+            // Tab Navigation
+            $('.tab').click(function () {
+                const tabId = $(this).data('tab');
+
+                $('.tab').removeClass('active');
+                $(this).addClass('active');
+
+                $('.tab-content').removeClass('active');
+                $(`#${tabId}`).addClass('active');
+            });
+
+            // File Upload
+            let opening_file = false;
+            // Clicking on drop area opens file selector
+            $('#dropArea').click(function (e) {
+                e.stopPropagation(); // Stop bubbling
+                console.log('Should open file selector');
+                if (!opening_file) {
+                    opening_file = true;
+                    $('#fileInput').click();
+                }
+            });
+
+            $('#fileInput').change(function () {
+                opening_file = false;
+                const file = this.files[0];
+                if (file) {
+                    handleFile(file);
+                }
+            });
+
+            $('#dropArea').on('dragover', function (e) {
                 e.preventDefault();
-                alert('Please provide both a project name and a CSV file');
-                return false;
+                $(this).addClass('drag-over');
+            });
+
+            $('#dropArea').on('dragleave', function () {
+                $(this).removeClass('drag-over');
+            });
+
+            $('#dropArea').on('drop', function (e) {
+                e.preventDefault();
+                $(this).removeClass('drag-over');
+
+                const file = e.originalEvent.dataTransfer.files[0];
+                if (file) {
+                    handleFile(file);
+                }
+            });
+
+            function handleFile(file) {
+                console.log('File selected:', file.name);
+                $('#fileName').text(file.name);
             }
-            
-            document.getElementById('loadingSpinner').style.display = 'inline-block';
-            submitBtn.disabled = true;
+
+            $('#createProject').click(async function () {
+                const projectName = $('#projectName').val().trim();
+
+                if (!projectName) {
+                    alert('Please enter a project name.');
+                    return;
+                }
+
+                const activeTab = $('.tab.active').data('tab');
+                let connectionInfo = {};
+
+                if (activeTab === 'uploadTab') {
+                    if (!$('#fileName').text()) {
+                        alert('Please select a CSV file.');
+                        return;
+                    }
+
+                    connectionInfo = {
+                        type: 'csv',
+                        fileName: $('#fileName').text()
+                    };
+                    file = $('#fileInput')[0].files[0]
+
+                    await uploadFile(file, projectName)
+
+
+                } else if (activeTab === 'awsTab') {
+                    connectionInfo = {
+                        type: 'aws',
+                        region: $('#awsRegion').val(),
+                        endpoint: $('#awsEndpoint').val(),
+                        dbType: $('#awsDbType').val(),
+                        dbName: $('#awsDbName').val(),
+                        username: $('#awsUsername').val(),
+                        password: $('#awsPassword').val()
+                    };
+                } else if (activeTab === 'azureTab') {
+                    connectionInfo = {
+                        type: 'azure',
+                        server: $('#azureServer').val(),
+                        dbType: $('#azureDbType').val(),
+                        dbName: $('#azureDbName').val(),
+                        username: $('#azureUsername').val(),
+                        password: $('#azurePassword').val(),
+                        connectionString: $('#azureConnectionString').val()
+                    };
+                } else if (activeTab === 'gcpTab') {
+                    connectionInfo = {
+                        type: 'gcp',
+                        projectId: $('#gcpProjectId').val(),
+                        instanceName: $('#gcpInstanceName').val(),
+                        dbType: $('#gcpDbType').val(),
+                        dbName: $('#gcpDbName').val(),
+                        username: $('#gcpUsername').val(),
+                        password: $('#gcpPassword').val(),
+                        serviceAccount: $('#gcpServiceAccount').val()
+                    };
+                }
+
+                console.log("Creating project:", {
+                    name: projectName,
+                    connection: connectionInfo
+                });
+                $('#newProjectModal').fadeOut(200);
+                showNotification(`Project "${projectName}" created successfully!`);
+            });
+
+            function uploadFile(file, projectName) {
+                console.log('File Upload called')
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('project_name', projectName);
+
+                fetch('/new-project', {
+                    method: 'POST',
+                    body: formData
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Upload failed');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Upload successful:', data);
+                        start_processing()
+                        startAI(data.file_path)
+                        alert('Upload successful!');
+                    })
+                    .catch(error => {
+                        console.error('Error uploading file:', error);
+                        alert('Error uploading file');
+                    });
+            }
+
+
+            // Column Selection Modal
+            $('#columnsBtn').click(function () {
+                initColumnSelector();
+                $('#columnModal').fadeIn(200);
+            });
+
+            $('#closeColumnModal, #resetColumns').click(function () {
+                // Reset to original visibility if clicking cancel/reset
+                if ($(this).attr('id') === 'resetColumns') {
+                    columns.forEach(column => column.visible = true);
+                    initColumnSelector();
+                }
+                $('#columnModal').fadeOut(200);
+            });
+
+            $('#saveColumns').click(function () {
+                // Apply column visibility and refresh table
+                populateTable();
+                $('#columnModal').fadeOut(200);
+            });
+
+            // Export Modal
+            $('#exportBtn').click(function () {
+                $('#exportModal').fadeIn(200);
+            });
+
+            $('#closeExportModal, #cancelExport').click(function () {
+                $('#exportModal').fadeOut(200);
+            });
+
+            $('#confirmExport').click(function () {
+                const format = $('#exportFormat').val();
+                const exportCurrentView = $('#exportCurrentView').is(':checked');
+                const exportSelectedColumns = $('#exportSelectedColumns').is(':checked');
+
+                // In a real app, you would handle the export process here
+                console.log("Exporting data:", {
+                    format,
+                    currentViewOnly: exportCurrentView,
+                    selectedColumnsOnly: exportSelectedColumns
+                });
+
+                $('#exportModal').fadeOut(200);
+                showNotification(`Data exported as ${format.toUpperCase()} successfully!`);
+            });
+
+            // Toggle AI panel on mobile
+            $('#togglePanel').click(function () {
+                $('.ai-panel').toggleClass('open');
+            });
+
+            $('#clearAiBtn').click(function () {
+                $('.ai-prompt-input').val('');
+                $('.ai-formatted-prompt').text('Your formatted prompt will appear here...');
+                $('.ai-response').text('The AI response will appear here...');
+            });
+
+            // Notification helper
+            function showNotification(message) {
+                const notification = $('<div>')
+                    .addClass('notification')
+                    .text(message)
+                    .css({
+                        position: 'fixed',
+                        bottom: '20px',
+                        right: '20px',
+                        padding: '10px 20px',
+                        backgroundColor: 'var(--primary-color)',
+                        color: 'white',
+                        borderRadius: 'var(--border-radius)',
+                        boxShadow: 'var(--shadow)',
+                        zIndex: 9999,
+                        opacity: 0
+                    })
+                    .appendTo('body')
+                    .animate({ opacity: 1, bottom: '30px' }, 300);
+
+                setTimeout(() => {
+                    notification.animate({ opacity: 0, bottom: '20px' }, 300, function () {
+                        $(this).remove();
+                    });
+                }, 3000);
+            }
+
+
         });
-    }
-});
-</script>
-{% endblock %}
+    </script>
+</body>
+
+</html>

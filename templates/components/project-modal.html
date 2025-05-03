@@ -1,0 +1,68 @@
+<!-- New Project Modal -->
+<div class="modal-overlay" id="newProjectModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Create New Project</div>
+            <button class="modal-close" id="closeNewProjectModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label class="form-label" for="projectName">Project Name</label>
+                <input type="text" class="form-control" id="projectName" placeholder="Enter project name">
+            </div>
+
+            <div class="tabs">
+                <div class="tab active" data-tab="uploadTab">Upload CSV</div>
+                <div class="tab" data-tab="awsTab">Connect Database</div>
+            </div>
+
+            <div class="tab-content active" id="uploadTab">
+                <div class="file-drop-area" id="dropArea">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #aaa;"></i>
+                    <p>Drag and drop your CSV file here or click to browse</p>
+                    <input type="file" class="file-input" id="fileInput" accept=".csv">
+                    <div id="fileName" style="margin-top: 1rem; color: var(--primary-color);"></div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="awsTab">
+                <div class="db-connection-form">
+                    <div class="form-group">
+                        <label for="dbType">Database Type</label>
+                        <select class="form-control" id="dbType">
+                            <option value="mysql">MySQL</option>
+                            <option value="postgresql">PostgreSQL</option>
+                            <option value="sqlserver">SQL Server</option>
+                            <option value="oracle">Oracle</option>
+                            <option value="sqlite">SQLite</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="dbHost">Host / Server Address</label>
+                        <input type="text" class="form-control" id="dbHost" placeholder="e.g., 127.0.0.1 or db.example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="dbPort">Port</label>
+                        <input type="text" class="form-control" id="dbPort" value="3306" placeholder="e.g., 5432 for PostgreSQL">
+                    </div>
+                    <div class="form-group">
+                        <label for="dbName">Database Name</label>
+                        <input type="text" class="form-control" id="dbName">
+                    </div>
+                    <div class="form-group">
+                        <label for="dbUsername">Username</label>
+                        <input type="text" class="form-control" id="dbUsername">
+                    </div>
+                    <div class="form-group">
+                        <label for="dbPassword">Password</label>
+                        <input type="password" class="form-control" id="dbPassword">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="cancelNewProject">Cancel</button>
+            <button class="btn btn-primary" id="createProject">Create Project</button>
+        </div>
+    </div>
+</div>
